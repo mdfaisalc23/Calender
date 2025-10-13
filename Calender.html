@@ -1,0 +1,392 @@
+<!DOCTYPE html><html lang="en">  <head>  
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>Bihar Government Calendar 2025</title>  
+  <style>  
+    body {  
+      font-family: Arial, sans-serif;  
+      margin: 0;  
+      padding: 0;  
+      background-color: #f5f5f5;  
+    }  
+    .calendar-container {  
+      max-width: 600px;  
+      margin: 20px auto;  
+      background: white;  
+      border-radius: 10px;  
+      padding: 20px;  
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);  
+    }  
+    h2 {  
+      text-align: center;  
+    }  
+    .calendar-header {  
+      display: flex;  
+      justify-content: space-between;  
+      align-items: center;  
+      margin-bottom: 10px;  
+    }  
+    .calendar-grid {  
+      display: grid;  
+      grid-template-columns: repeat(7, 1fr);  
+      gap: 8px;  
+    }  
+    .day-header {  
+      background-color: #e0e0e0;  
+      text-align: center;  
+      padding: 8px;  
+      font-weight: bold;  
+      border-radius: 6px;  
+    }  
+    .day {  
+      display: flex;  
+      justify-content: center;  
+      align-items: center;  
+      height: 45px;  
+      width: 45px;  
+      margin: auto;  
+      font-size: 16px;  
+      font-weight: 500;  
+      border-radius: 50%;  
+      cursor: pointer;  
+      position: relative;  
+    }  
+    .holiday {  
+      background-color: #c8f7c5;  
+      color: green;  
+    }  
+    .sunday {  
+      background-color: #ffcaca;  
+      color: red;  
+    }  
+    .current-day {  
+      border: 2px solid #007bff;  
+    }  
+    
+    #holidayModal {  
+      display: none;  
+      position: fixed;  
+      z-index: 100;  
+      left: 0;  
+      top: 0;  
+      width: 100%;  
+      height: 100%;  
+      overflow: auto;  
+      background-color: rgba(0,0,0,0.4);  
+    }  
+    .modal-content {  
+      background-color: #fff;  
+      margin: 15% auto;  
+      padding: 20px;  
+      border-radius: 12px;  
+      width: 80%;  
+      max-width: 400px;  
+      text-align: center;  
+      font-size: 18px;  
+    }  
+    .close-button {  
+      color: #aaa;  
+      float: right;  
+      font-size: 24px;  
+      font-weight: bold;  
+      cursor: pointer;  
+    }  
+    .close-button:hover {  
+      color: black;  
+    }  
+    .date-selector {  
+      display: flex;  
+      justify-content: center;  
+      gap: 10px;  
+      margin-bottom: 20px;  
+    }  
+    .date-selector select,  
+    .date-selector button {  
+      padding: 6px 10px;  
+      font-size: 14px;  
+    }  
+  </style>  
+</head>  
+<body>  
+  <div class="calendar-container">  
+    <h2>Bihar Government Calendar 2025</h2>  
+    <div class="calendar-header">  
+      <button onclick="changeMonth(-1)">&lt;</button>  
+      <div id="monthYear"></div>  
+      <button onclick="changeMonth(1)">&gt;</button>  
+    </div><div class="date-selector">  
+  <select id="selectDate"></select>  
+  <select id="selectMonth"></select>  
+  <select id="selectYear"></select>  
+  <button onclick="jumpToDate()">Go</button>  
+</div>  <div class="calendar-grid" id="calendar"></div>    </div>  <div id="holidayModal" class="modal">  
+    <div class="modal-content">  
+      <span class="close-button">&times;</span>  
+      <p id="modalText"></p>  
+    </div>  
+  </div> 
+  <h3>Month-wise Holidays</h3>
+<div id="holidayList" style="max-height: 300px; overflow-y: auto; margin-top: 10px; padding: 10px; background: #fff8e1; border-radius: 10px; border: 1px solid #e0e0e0;"></div>
+  <script>  
+    const holidays = [
+  { date: "2025-01-06", name: "Guru Gobind Singh Jayanti" },
+  { date: "2025-01-26", name: "Republic Day" },
+  { date: "2025-02-03", name: "Vasant Panchami / Sarasvati Puja" },
+  { date: "2025-02-12", name: "Sant Ravidas Jayanti" },
+  { date: "2025-02-14", name: "Shab-e-Barat" },
+  { date: "2025-02-26", name: "Maha Shivratri" },
+  { date: "2025-03-13", name: "Holika Dahan / Holi Eve" },
+  { date: "2025-03-14", name: "Holi" },
+  { date: "2025-03-22", name: "Bihar Day / Bihar Diwas" },
+  { date: "2025-03-28", name: "Ramadan Last Fast" },
+  { date: "2025-03-31", name: "Eid-ul-Fitr" },
+  { date: "2025-04-01", name: "Bank Holiday – Accounts Closing (banks)" },
+  { date: "2025-04-05", name: "Ashoka’s Birth Anniversary" },
+  { date: "2025-04-06", name: "Ram Navami" },
+  { date: "2025-04-10", name: "Mahavir Jayanti" },
+  { date: "2025-04-14", name: "Dr. B. R. Ambedkar Jayanti" },
+  { date: "2025-04-18", name: "Good Friday" },
+  { date: "2025-04-23", name: "Veer Kunwar Singh Jayanti" },
+  { date: "2025-05-06", name: "Janaki Navami" },
+  { date: "2025-05-12", name: "Buddha Purnima" },
+  { date: "2025-06-07", name: "Eid-ul-Adha / Bakrid" },
+  { date: "2025-06-11", name: "Sant Kabir Jayanti" },
+  { date: "2025-07-06", name: "Muharram" },
+  { date: "2025-08-15", name: "Independence Day" },
+  { date: "2025-08-16", name: "Janmashtami" },
+  { date: "2025-09-05", name: "Milad (Hazrat Muhammad’s Birthday)" },
+  { date: "2025-09-29", name: "Durga Puja (Ashtami)" },
+  { date: "2025-10-01", name: "Maha Navami (Durga Puja)" },
+  { date: "2025-10-02", name: "Vijayadashami / Gandhi Jayanti" },
+  { date: "2025-10-22", name: "Diwali" },
+  { date: "2025-10-27", name: "Chhath Puja" },
+  { date: "2025-10-28", name: "Chhath Puja Holiday" },
+  { date: "2025-12-25", name: "Christmas Day" }
+];
+
+
+
+  
+   const calendar = document.getElementById("calendar");  
+const monthYear = document.getElementById("monthYear");  
+let currentDate = new Date();  
+let selectedDateStr = "";  
+
+function renderCalendar(date) {  
+  const year = date.getFullYear();  
+  const month = date.getMonth();  
+  const today = new Date();  
+  const firstDay = new Date(year, month, 1).getDay();  
+  const daysInMonth = new Date(year, month + 1, 0).getDate();  
+
+  calendar.innerHTML = "";  
+  monthYear.textContent = date.toLocaleString('default', { month: 'long', year: 'numeric' });  
+
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];  
+  dayNames.forEach(day => {  
+    const div = document.createElement("div");  
+    div.textContent = day;  
+    div.className = "day-header";  
+    calendar.appendChild(div);  
+  });  
+
+  for (let i = 0; i < firstDay; i++) {  
+    const empty = document.createElement("div");  
+    calendar.appendChild(empty);  
+  }  
+
+  for (let d = 1; d <= daysInMonth; d++) {  
+    const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;  
+    const div = document.createElement("div");  
+    div.className = "day";  
+    div.textContent = d;  
+
+    const holiday = holidays.find(h => h.date === dateStr);  
+    if (holiday) div.classList.add("holiday");  
+    if (new Date(dateStr).getDay() === 0) div.classList.add("sunday");  
+    if (today.toDateString() === new Date(dateStr).toDateString()) div.classList.add("current-day");  
+if (selectedDateStr === dateStr) {
+  if (holiday) {
+    div.style.backgroundColor = "#34c759"; // green for holidays
+    div.style.color = "white";
+  } else if (new Date(dateStr).getDay() === 0) {
+    div.style.backgroundColor = "#ff4d4d"; // red for Sundays
+    div.style.color = "white";
+  } else {
+    div.style.backgroundColor = "#007bff"; // blue for other dates
+    div.style.color = "white";
+  }
+} 
+
+    div.addEventListener("click", () => {  
+      selectedDateStr = dateStr;  
+      renderCalendar(currentDate);  
+      if (holiday) openModal(`${d} ${date.toLocaleString('default', { month: 'long' })} — ${holiday.name}`);  
+      else openModal(`${d} ${date.toLocaleString('default', { month: 'long' })} — No holiday`);  
+    });  
+
+    calendar.appendChild(div);  
+  }  
+}  
+
+function changeMonth(offset) {  
+  currentDate.setMonth(currentDate.getMonth() + offset);  
+  renderCalendar(currentDate);  
+}  
+
+function jumpToDate() {  
+  const day = parseInt(document.getElementById("selectDate").value);  
+  const month = parseInt(document.getElementById("selectMonth").value);  
+  const year = parseInt(document.getElementById("selectYear").value);  
+  currentDate = new Date(year, month, 1);  
+  selectedDateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;  
+  renderCalendar(currentDate);  
+}  
+
+const modal = document.getElementById("holidayModal");  
+const modalText = document.getElementById("modalText");  
+const closeButton = document.querySelector(".close-button");  
+
+function openModal(text) {  
+  modalText.textContent = text;  
+  modal.style.display = "block";  
+}  
+
+closeButton.onclick = () => modal.style.display = "none";  
+window.onclick = event => {  
+  if (event.target === modal) modal.style.display = "none";  
+};  
+
+function populateDateSelectors() {  
+  const dateSelect = document.getElementById("selectDate");  
+  const monthSelect = document.getElementById("selectMonth");  
+  const yearSelect = document.getElementById("selectYear");  
+
+  for (let d = 1; d <= 31; d++) {  
+    const opt = document.createElement("option");  
+    opt.value = d;  
+    opt.textContent = d;  
+    dateSelect.appendChild(opt);  
+  }  
+  for (let m = 0; m < 12; m++) {  
+    const opt = document.createElement("option");  
+    opt.value = m;  
+    opt.textContent = new Date(2000, m).toLocaleString('default', { month: 'long' });  
+    monthSelect.appendChild(opt);  
+  }  
+  for (let y = 2024; y <= 2026; y++) {  
+    const opt = document.createElement("option");  
+    opt.value = y;  
+    opt.textContent = y;  
+    yearSelect.appendChild(opt);  
+  }  
+
+  dateSelect.value = currentDate.getDate();  
+  monthSelect.value = currentDate.getMonth();  
+  yearSelect.value = currentDate.getFullYear();  
+}  
+
+populateDateSelectors();  
+renderCalendar(currentDate);
+
+
+
+
+
+function listUpcomingHolidaysAndSundays() {
+  const holidayList = document.getElementById("holidayList");
+  holidayList.innerHTML = ""; // Clear old list
+
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+
+  // Handle December → January next year
+  const monthsToShow = [
+    { month: currentMonth, year: currentYear },
+    { month: (currentMonth + 1) % 12, year: currentMonth === 11 ? currentYear + 1 : currentYear }
+  ];
+
+  let listItems = [];
+
+  monthsToShow.forEach(({ month, year }) => {
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
+      const currentDate = new Date(dateStr);
+
+      // Only future or today's dates
+      if (currentDate >= new Date(today.setHours(0,0,0,0))) {
+        const dayOfWeek = currentDate.getDay();
+        const holiday = holidays.find(h => h.date === dateStr);
+
+        if (holiday && dayOfWeek === 0) {
+          // Holiday + Sunday
+          listItems.push({
+            date: currentDate,
+            name: `Sunday (${holiday.name})`,
+            type: "sunday-holiday"
+          });
+        } else if (holiday) {
+          listItems.push({
+            date: currentDate,
+            name: holiday.name,
+            type: "holiday"
+          });
+        } else if (dayOfWeek === 0) {
+          listItems.push({
+            date: currentDate,
+            name: "Sunday",
+            type: "sunday"
+          });
+        }
+      }
+    }
+  });
+
+  // Sort by date
+  listItems.sort((a, b) => a.date - b.date);
+
+  if (listItems.length === 0) {
+    holidayList.innerHTML = "<p>No upcoming holidays this or next month.</p>";
+    return;
+  }
+
+  listItems.forEach(item => {
+    const div = document.createElement("div");
+    const formattedDate = item.date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+    div.textContent = `${formattedDate} — ${item.name}`;
+    div.style.padding = "5px 0";
+    div.style.borderBottom = "1px solid #eee";
+
+    if (item.type === "holiday") {
+      div.style.color = "green";
+      div.style.fontWeight = "bold";
+    } else if (item.type === "sunday") {
+      div.style.color = "red";
+      div.style.fontWeight = "bold";
+    } else if (item.type === "sunday-holiday") {
+      div.style.color = "red";
+      div.style.fontWeight = "bold";
+    }
+
+    holidayList.appendChild(div);
+  });
+}
+
+listUpcomingHolidaysAndSundays();
+
+
+
+
+
+
+const grouped = groupHolidaysAndSundaysByMonth(2025); // Pass current year
+</script></body>
+
+</html>   
